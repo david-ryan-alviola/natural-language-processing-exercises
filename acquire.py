@@ -8,12 +8,19 @@ _headers = {'User-Agent' :\
 _blog_pages = ["https://codeup.com/codeups-data-science-career-accelerator-is-here/", "https://codeup.com/data-science-myths/", "https://codeup.com/data-science-vs-data-analytics-whats-the-difference/", "https://codeup.com/10-tips-to-crush-it-at-the-sa-tech-job-fair/", "https://codeup.com/competitor-bootcamps-are-closing-is-the-model-in-danger/"]
 
 def extract_page_information(soup):
+    """
+    Extracts the title and content from the soup object generated from the Codeup blog page.\
+    Returns a dictionary with the title and page content.
+    """
     title = soup.select(".jupiterx-post-title")[0]
     content = soup.select(".jupiterx-post-content")[0]
     
     return {'title' : title.text, 'content' : content.text}
 
 def scrape_webpage(url):
+    """
+    Scrapes the given webpage for information. Returns a dictionary with the title and page content.
+    """
     response = req.get(url, headers=_headers)
     html = response.text
 
@@ -22,9 +29,15 @@ def scrape_webpage(url):
     return extract_page_information(soup)
 
 def acquire_codeup_blog_data():
+    """
+    Loops through the Codeup blog pages and generates a dataframe with each page's title and content.
+    """
     return pd.DataFrame([scrape_webpage(page) for page in _blog_pages])
 
 def extract_article_info(card):
+    """
+    Extracts the title, content, author, and timestamp for the card. Returns a dictionary containing the extracted information.
+    """
     title = card.find("span", attrs={'itemprop' : "headline"})
     content = card.find("div", attrs={'itemprop' : "articleBody"})
     author = card.select(".author")[0]
@@ -33,6 +46,10 @@ def extract_article_info(card):
     return {'title' : title.text, 'content' : content.text, 'author' : author.text, 'timestamp' : time['content']}
 
 def acquire_inshort_data():
+    """
+    Generates a dataframe containing the title, content, author, and timestamp\
+    from each article featured on the All News section of inshorts.com.
+    """
     response = req.get("https://inshorts.com/en/read")
     html = response.text
 
