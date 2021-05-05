@@ -69,14 +69,16 @@ def remove_stopwords(string, extra_words=None, exclude_words=None):
     if exclude_words != None:
         excludes = exclude_words.copy()
     
-    stopword_list = stopword_list + extras
+    for extra_word in extras:
+        if extra_word not in stopword_list:
+            stopword_list.append(extra_word)
         
-    for ex_word in excludes:
-        if ex_word in stopword_list:
-            stopword_list.remove(ex_word)
+    for exclude_word in excludes:
+        if exclude_word in stopword_list:
+            stopword_list.remove(exclude_word)
 
     filtered_words = [word for word in string.split() if word not in stopword_list]
-
+    
     return " ".join(filtered_words)
 
 def prepare_webpage_data(df, content_key):
